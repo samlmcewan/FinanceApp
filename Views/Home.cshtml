@@ -8,13 +8,21 @@
 <h1>@Model.PageHeading</h1>
 
 <form>
-	<label for="csvUpload">Upload csv file</label>
+	<label for="csvFileUpload">Upload csv file</label>
 	<input type="file"
-		id="csvUpload" name="csvUpload"
+		id="csvFileUpload" name="csvFileUpload"
 		accept="csv">
-	<button id="csvUploadBtn">Upload</button>
+	<button id="csvBtn">Upload</button>
 </form>
 
 <script>
+	const addCSV = (ev) => {
+		ev.preventDefault();
+		let csvFile = document.querySelector('#csvFileUpload').value; 
+		
+	}
 	
+	document.addEventListener('DOMContentLoaded', ()=> {
+		document.querySelector('#csvBtn').addEventListener('click', addCSV);
+	})
 </script>
