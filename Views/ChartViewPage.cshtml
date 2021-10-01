@@ -8,7 +8,8 @@
 
  <!-- Render parsed JSON data here -->
     <div style="margin-top:10px;">
-        <pre id="jsonData"></pre>
+        @* <pre id="jsonData"></pre> *@
+        <ul id="jsonData"></ul>
     </div>
 
 
@@ -30,10 +31,12 @@ debitTransactions.push(transaction);
         const groupByKey = (list, key) => list.reduce((hash, obj) => ({...hash, [obj[key]]:( hash[obj[key]] || [] ).concat(obj)}), {});
         let merchantArrays = groupByKey(debitTransactions, 'Transaction Description');
         
-        console.log(merchantArrays);
+        @* console.log(merchantArrays); *@
         
+
         @* Get just the Merchant and its transactions  *@
-    
+
+            let merchantsTotalDebits = [];
        for (const [merchant, transaction] of Object.entries(merchantArrays)) {
            let transactions = [];
             @* console.log(`${merchant}: ${transaction}`); *@
@@ -47,10 +50,27 @@ debitTransactions.push(transaction);
             const sum = transactions.reduce((partial_sum, a) => partial_sum + a,0); 
             @* make sum a string to 2 decimel places  *@
             const sumFormat = sum.toFixed(2);
-            console.log(`${merchant}: ${sumFormat}`);
+             console.log(`${merchant}: ${sumFormat}`); 
+            merchantsTotalDebits.push(`${merchant}: ${sumFormat}`);
+        };
 
-        }
-      
+        @* Display the merchant and amount in an li elemnent on the page  *@
+
+       let merchantDebitStr = JSON.stringify(merchantsTotalDebits);
+       let merchantDebitJson = JSON.parse(merchantDebitStr);
+       @* console.log(merchantDebitJson); *@
+
+       merchantDebitJson.forEach((debitTotal) => {
+           console.log(debitTotal);
+           let node = document.createElement('li');
+           let nodeText = document.createTextNode(`${debitTotal}`);
+            node.appendChild(nodeText);  
+            document.getElementById("jsonData").appendChild(node);      
+       });
+
+
+
+       @* document.getElementById("jsonData").innerHTML = `${merchantDebitJson}`; *@
         
 
 
