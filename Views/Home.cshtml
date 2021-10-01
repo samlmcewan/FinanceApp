@@ -1,28 +1,61 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Home>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using System.IO;
+
+
 @{
 	Layout = "Master.cshtml";
 }
 
 <h1>@Model.PageHeading</h1>
 
-<form>
-	<label for="csvFileUpload">Upload csv file</label>
-	<input type="file"
-		id="csvFileUpload" name="csvFileUpload"
-		accept="csv">
-	<button id="csvBtn">Upload</button>
-</form>
+        <h4>Upload And Convert Excel File into JSON in Javascript</h4>
+       
+           
+                <!-- Input type file to upload excel file -->
+                <input type="file" id="fileUpload" accept=".xls,.xlsx,.csv" /><br />
+                <button type="button" id="uploadExcel">Convert</button>
+
+                <!-- Render parsed JSON data here -->
+                <div style="margin-top:10px;">
+                    <pre id="jsonData"></pre>
+                </div>
+       
+       
+   
+
+<script type="text/javascript" src="/scripts/xlsx.js"></script>
 
 <script>
-	const addCSV = (ev) => {
-		ev.preventDefault();
-		let csvFile = document.querySelector('#csvFileUpload').value; 
-		
-	}
-	
-	document.addEventListener('DOMContentLoaded', ()=> {
-		document.querySelector('#csvBtn').addEventListener('click', addCSV);
-	})
-</script>
+        var selectedFile;
+        document
+          .getElementById("fileUpload")
+          .addEventListener("change", function(event) {
+            selectedFile = event.target.files[0];
+          });
+        document
+          .getElementById("uploadExcel")
+          .addEventListener("click", function() {
+            if (selectedFile) {
+              var fileReader = new FileReader();
+              fileReader.onload = function(event) {
+                var data = event.target.result;
+    
+                var workbook = XLSX.read(data, {
+                  type: "binary"
+                });
+                workbook.SheetNames.forEach(sheet => {
+                  let rowObject = XLSX.utils.sheet_to_row_object_array(
+                    workbook.Sheets[sheet]
+                  );
+                  let jsonObject = JSON.stringify(rowObject);
+                  document.getElementById("jsonData").innerHTML = jsonObject;
+                  console.log(jsonObject);
+				  sessionStorage.setItem('transactions', jsonObject);
+                });
+              };
+              fileReader.readAsBinaryString(selectedFile);
+            }
+          });
+      </script>
