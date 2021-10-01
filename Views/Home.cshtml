@@ -1,7 +1,6 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Home>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
-@using System.IO;
 
 
 @{
@@ -15,27 +14,35 @@
            
                 <!-- Input type file to upload excel file -->
                 <input type="file" id="fileUpload" accept=".xls,.xlsx,.csv" /><br />
-                <button type="button" id="uploadExcel">Convert</button>
+                <a id="chartViewLink" href=""><button type="button" id="uploadBtn" disabled="true">Convert</button></a>
 
-                <!-- Render parsed JSON data here -->
+                @* <!-- Render parsed JSON data here -->
                 <div style="margin-top:10px;">
                     <pre id="jsonData"></pre>
-                </div>
+                </div> *@
        
        
    
-
+@* Script to convert csv or xls file to json  *@
 <script type="text/javascript" src="/scripts/xlsx.js"></script>
 
+
 <script>
+	@* listen for file upload, convert to json then save to session storage  *@
         var selectedFile;
         document
           .getElementById("fileUpload")
           .addEventListener("change", function(event) {
             selectedFile = event.target.files[0];
+			@* Get the a tag around the button element and set the href to the chart-view-page , and enable the button element *@
+			const a = document.getElementById("chartViewLink");
+			a.href = "/chart-view-page/";
+			const btn = document.getElementById("uploadBtn");
+			btn.disabled = false;
+
           });
         document
-          .getElementById("uploadExcel")
+          .getElementById("uploadBtn")
           .addEventListener("click", function() {
             if (selectedFile) {
               var fileReader = new FileReader();
@@ -50,7 +57,7 @@
                     workbook.Sheets[sheet]
                   );
                   let jsonObject = JSON.stringify(rowObject);
-                  document.getElementById("jsonData").innerHTML = jsonObject;
+                  @* document.getElementById("jsonData").innerHTML = jsonObject; *@
                   console.log(jsonObject);
 				  sessionStorage.setItem('transactions', jsonObject);
                 });
@@ -59,3 +66,4 @@
             }
           });
       </script>
+

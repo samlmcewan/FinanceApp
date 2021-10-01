@@ -1,0 +1,82 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.ChartViewPage>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+	Layout = "Master.cshtml";
+}
+
+ <!-- Render parsed JSON data here -->
+    <div style="margin-top:10px;">
+        <pre id="jsonData"></pre>
+    </div>
+
+
+    <script>
+        @* get the json from session storage and parse it  *@
+        let jsonObject = sessionStorage.getItem('transactions');
+        let parsedJson = JSON.parse(jsonObject);
+
+        @* Iterate over the transactions and if its a debit transaction add it to the debitTransactions array  *@
+        let debitTransactions = [];
+        parsedJson.forEach((transaction) => {
+            if (transaction['Debit Amount'] > 0) {
+debitTransactions.push(transaction);
+            }
+        })
+       
+
+        @* Group the debit transactions by merchant  *@
+        const groupByKey = (list, key) => list.reduce((hash, obj) => ({...hash, [obj[key]]:( hash[obj[key]] || [] ).concat(obj)}), {});
+        let merchantArrays = groupByKey(debitTransactions, 'Transaction Description');
+        
+        console.log(merchantArrays);
+        
+        @* Get just the Merchant and its transactions  *@
+    
+       for (const [merchant, transaction] of Object.entries(merchantArrays)) {
+           let transactions = [];
+            @* console.log(`${merchant}: ${transaction}`); *@
+             transaction.forEach((value) => {
+                transactions.push(value['Debit Amount']);
+            }) 
+            @* console.log(`${merchant}: ${transactions}`); *@
+
+            @* Add up the total debit amounts for each merchant  *@
+
+            const sum = transactions.reduce((partial_sum, a) => partial_sum + a,0); 
+            @* make sum a string to 2 decimel places  *@
+            const sumFormat = sum.toFixed(2);
+            console.log(`${merchant}: ${sumFormat}`);
+
+        }
+      
+
+
+        
+        
+
+        @*  let merchantDebits = [];
+        merchantArrays.forEach((merchant) => {
+
+            consol.log(merchant);
+            
+            
+            let merchantDebit = [];
+            merchant.forEach((merchantTransaction) => {
+                merchantDebit.push(merchantTransaction['Debit Amount']);
+            });
+            const merchantSum = merchantDebit.reduce((partial_sum, a) => partial_sum + a,0);
+        merchantDebits.push(merchantSum); 
+        
+        
+
+        }) *@
+@* console.log(merchantDebits);  *@
+        
+
+
+        @* access the data from the parsed json and render it in the div *@
+        @* document.getElementById("jsonData").innerHTML = JSON.stringify(merchantArrays['DELIVEROO']); *@
+    
+    </script>
