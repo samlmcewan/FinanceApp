@@ -6,110 +6,25 @@
 	Layout = "Master.cshtml";
 }
 
+
+<div class="container">
+    <canvas id="myChart" style="padding:12rem;">
+    </canvas>
+     <div id="totalNum"></div>
+   
+</div>
+
+
  <!-- Render parsed JSON data here -->
     <div style="margin-top:10px;">
         @* <pre id="jsonData"></pre> *@
         <ul id="jsonData"></ul>
     </div>
 
+    @* Get user upload, convert to json, add to session storage. Get the array to use as chart data.  *@
+    <script src="/scripts/uploadHandler.js"></script>
+    @* Chart js script  *@
+    <script src="/scripts/chart.js"></script>
+    <script src="/scripts/chartRender.js"></script>
 
-    <script>
-        @* get the json from session storage and parse it  *@
-        let jsonObject = sessionStorage.getItem('transactions');
-        let parsedJson = JSON.parse(jsonObject);
-
-        @* Iterate over the transactions and if its a debit transaction add it to the debitTransactions array  *@
-        let debitTransactions = [];
-        parsedJson.forEach((transaction) => {
-            if (transaction['Debit Amount'] > 0) {
-debitTransactions.push(transaction);
-            }
-        })
-       
-
-        @* Group the debit transactions by merchant  *@
-        const groupByKey = (list, key) => list.reduce((hash, obj) => ({...hash, [obj[key]]:( hash[obj[key]] || [] ).concat(obj)}), {});
-        let merchantArrays = groupByKey(debitTransactions, 'Transaction Description');
-
-        
-        
-         @* console.log(merchantArrays);  *@
-        
-
-        @* Get just the Merchant and its transactions  *@
-
-            let merchantsTotalDebits = [];
-       for (const [merchant, transaction] of Object.entries(merchantArrays)) {
-           let transactions = [];
-            @* console.log(`${merchant}: ${transaction}`); *@
-             transaction.forEach((value) => {
-                transactions.push(value['Debit Amount']);
-            }); 
-            @* console.log(`${merchant}: ${transactions}`); *@
-
-
-            @* Add up the total debit amounts for each merchant  *@
-
-            const sum = transactions.reduce((partial_sum, a) => partial_sum + a,0); 
-            @* make sum a string to 2 decimel places  *@
-            const sumFormat = sum.toFixed(2);
-            
-             @* console.log(`${merchant}: ${sumFormat}`);  *@
-            merchantsTotalDebits.push([merchant, parseFloat(sumFormat)]);
-            
-           
-           
-            
-            
-        };
-        console.log(merchantsTotalDebits);
-        
-        @* take the merchantTOtalDebits array and sort from lowest to highest  *@
-        merchantsTotalDebits.sort(function(a, b)
-	{
-	  return a[1]-b[1]; // compare numbers
-	});
-	 console.log(merchantsTotalDebits);
-
-     
-
-
-
-@* this code takes an array and turns into an object  *@
-        @* const obj = Object.fromEntries(someArray);
-        console.log(obj);   *@
-       
-       
-
-
-
-        @* here i need to order merchantsTotalDebits by biggest debit amount first to smallest  *@
-       
-
-        @* Display the merchant and amount in an li elemnent on the page  *@
-
-       let merchantDebitStr = JSON.stringify(merchantsTotalDebits);
-        @* console.log(merchantDebitStr);  *@
-       let merchantDebitJson = JSON.parse(merchantDebitStr);
-       @* console.log(merchantDebitJson);  *@
-
-       
-
-       merchantDebitJson.forEach((debitTotal) => {
-           @* console.log(debitTotal); *@
-           let node = document.createElement('li');
-           let nodeText = document.createTextNode(`${debitTotal}`);
-            node.appendChild(nodeText);  
-            document.getElementById("jsonData").appendChild(node);      
-       });
-
-
-
-       @* document.getElementById("jsonData").innerHTML = `${merchantDebitJson}`; *@
-        
-
-
-        @* access the data from the parsed json and render it in the div *@
-        @* document.getElementById("jsonData").innerHTML = JSON.stringify(merchantArrays['DELIVEROO']); *@
     
-    </script>
