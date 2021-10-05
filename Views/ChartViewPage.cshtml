@@ -30,8 +30,10 @@ debitTransactions.push(transaction);
         @* Group the debit transactions by merchant  *@
         const groupByKey = (list, key) => list.reduce((hash, obj) => ({...hash, [obj[key]]:( hash[obj[key]] || [] ).concat(obj)}), {});
         let merchantArrays = groupByKey(debitTransactions, 'Transaction Description');
+
         
-        @* console.log(merchantArrays); *@
+        
+         @* console.log(merchantArrays);  *@
         
 
         @* Get just the Merchant and its transactions  *@
@@ -42,26 +44,59 @@ debitTransactions.push(transaction);
             @* console.log(`${merchant}: ${transaction}`); *@
              transaction.forEach((value) => {
                 transactions.push(value['Debit Amount']);
-            }) 
+            }); 
             @* console.log(`${merchant}: ${transactions}`); *@
+
 
             @* Add up the total debit amounts for each merchant  *@
 
             const sum = transactions.reduce((partial_sum, a) => partial_sum + a,0); 
             @* make sum a string to 2 decimel places  *@
             const sumFormat = sum.toFixed(2);
-             console.log(`${merchant}: ${sumFormat}`); 
-            merchantsTotalDebits.push(`${merchant}: ${sumFormat}`);
+            
+             @* console.log(`${merchant}: ${sumFormat}`);  *@
+            merchantsTotalDebits.push([merchant, parseFloat(sumFormat)]);
+            
+           
+           
+            
+            
         };
+        console.log(merchantsTotalDebits);
+        
+        @* take the merchantTOtalDebits array and sort from lowest to highest  *@
+        merchantsTotalDebits.sort(function(a, b)
+	{
+	  return a[1]-b[1]; // compare numbers
+	});
+	 console.log(merchantsTotalDebits);
+
+     
+
+
+
+@* this code takes an array and turns into an object  *@
+        @* const obj = Object.fromEntries(someArray);
+        console.log(obj);   *@
+       
+       
+
+
+
+        @* here i need to order merchantsTotalDebits by biggest debit amount first to smallest  *@
+       
 
         @* Display the merchant and amount in an li elemnent on the page  *@
 
        let merchantDebitStr = JSON.stringify(merchantsTotalDebits);
+        @* console.log(merchantDebitStr);  *@
        let merchantDebitJson = JSON.parse(merchantDebitStr);
-       @* console.log(merchantDebitJson); *@
+       @* console.log(merchantDebitJson);  *@
+
+       
 
        merchantDebitJson.forEach((debitTotal) => {
-           console.log(debitTotal);
+           @* console.log(debitTotal); *@
            let node = document.createElement('li');
            let nodeText = document.createTextNode(`${debitTotal}`);
             node.appendChild(nodeText);  
