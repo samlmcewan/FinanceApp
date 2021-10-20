@@ -48,7 +48,6 @@
               var fileReader = new FileReader();
               fileReader.onload = function(event) {
                 var data = event.target.result;
-    
                 var workbook = XLSX.read(data, {
                   type: "binary"
                 });

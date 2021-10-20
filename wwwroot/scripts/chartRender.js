@@ -1,4 +1,4 @@
-console.log(topTen);
+
 
 // ['ACTIVE OUTDOOR PUR', 626]
 // 1: (2) ['BILLY BILSLAND CYC', 649.98]
@@ -18,7 +18,7 @@ console.log(topTen);
     
     
     const topTenObj = Object.fromEntries(topTen);
-        console.log(topTenObj); 
+       
 //         {
             // ACTIVE OUTDOOR PUR: 626
             // BILLY BILSLAND CYC: 649.98
@@ -35,11 +35,17 @@ console.log(topTen);
 
 const labelsArray = [];
 topTen.forEach(item => labelsArray.push(item[0]));
-console.log(labelsArray);
-
 
 const debitAmountsArray = [];
 topTen.forEach(item => debitAmountsArray.push(item[1]));
+
+
+const labelsArray2 = [];
+top20.forEach(item => labelsArray2.push(item[0]));
+
+const debitAmountsArray2 = [];
+top20.forEach(item => debitAmountsArray2.push(item[1]));
+
 
 
     //   topTen.forEach( (item) =>  Object.defineProperties( 

@@ -49,6 +49,11 @@ debitTransactions.push(transaction);
      let topTen = merchantsTotalDebits.slice(-10);
      console.log(topTen);
 
+     let top20 = merchantsTotalDebits.slice(-20, -10);
+     console.log(`top 20: ${merchantsTotalDebits.slice(-20)}`);
+     console.log(`top twenty second 10: ${top20}`);
+     console.log(`top twenty first 10: ${topTen}`);
+
      
 
 
